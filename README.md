@@ -1,2 +1,2 @@
-# golang-postgresql-grom-gorilla-mux
+# Golang + PostgreSQL + Grom + gorilla/mux
 Go PostgreSQL REST API (gorilla/mux, gorm ORM) Golang
