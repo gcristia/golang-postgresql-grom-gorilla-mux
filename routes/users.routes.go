@@ -19,6 +19,28 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func CreateUseHandler(w http.ResponseWriter, r *http.Request) {
+
+	var user models.User
+
+	json.NewDecoder(r.Body).Decode(&user)
+
+	createdUser := db.DB.Create(&user)
+	err := createdUser.Error
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(&user)
+}
+
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	params := mux.Vars(r)
@@ -31,30 +53,10 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&params)
-}
-
-func PostUsersHandler(w http.ResponseWriter, r *http.Request) {
-
-	var user models.User
-
-	json.NewDecoder(r.Body).Decode(&user)
-
-	createduser := db.DB.Create(&user)
-	err := createduser.Error
-
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
+	db.DB.Model(&user).Association("Tasks").Find(&user.Tasks)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-
 	json.NewEncoder(w).Encode(&user)
 }
 
