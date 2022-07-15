@@ -193,4 +193,4 @@ fabric.properties
 
 .env
 .idea
-temp/
+/tmp/
